@@ -50,7 +50,16 @@ T shared_ptr<T>::operator*()
 template<typename T>
 shared_ptr<T> shared_ptr<T>::operator=(shared_ptr<T>& other) {
     if (this != &other) {
-
+        if (count) {
+            if (*count == 1) {
+                delete count;
+                if (ptr)
+                {
+                    delete ptr;
+                }
+            }
+            else --(*count);
+        }
         if (ptr)
         {
             ptr = other.ptr;
