@@ -10,83 +10,117 @@ public:
     T operator*();
     size_t use_count() const;
     bool unique() const;
+    void clearing();
+    bool existsPtr() const;
+    bool existsCount() const;
     template<typename T>
     friend void swap(shared_ptr<T>& p1, shared_ptr<T>& p2);
+
 private:
-    T* ptr;
-    size_t* count;
+    T* mPtr;
+    size_t* mCount;
 };
 
 template<typename T>
 void swap(shared_ptr<T>& p1, shared_ptr<T>& p2)
 {
-    shared_ptr<int> p(new T);
-    p = p1;
-    p.ptr = p1.ptr;
-    p1.ptr = p2.ptr;
-    p2.ptr = p.ptr;
-    p.count = p1.count;
-    p1.count = p2.count;
-    p2.count = p.count;
+    T* p_ptr = p1.mPtr;
+    p1.mPtr = p2.mPtr;
+    p2.mPtr = p_ptr;
+    size_t* p_zize_t = p1.mCount;
+    p1.mCount = p2.mCount;
+    p2.mCount = p_zize_t;
 }
 
 template<typename T>
-shared_ptr<T>::shared_ptr() :ptr(nullptr), count(nullptr) {}
+shared_ptr<T>::shared_ptr() :mPtr(nullptr), mCount(nullptr) {}
 
 template<typename T>
-shared_ptr<T>::shared_ptr(T* ptr) : ptr(ptr), count(new size_t(1)) {}
+shared_ptr<T>::shared_ptr(T* ptr) : mPtr(ptr), mCount(new size_t(1)) {}
 
 template<typename T>
-shared_ptr<T>::shared_ptr(shared_ptr<T>& other) : count(other.count), ptr(other.ptr) {
-    (*count)++;
+shared_ptr<T>::shared_ptr(shared_ptr<T>& other) : mCount(other.mCount), mPtr(other.mPtr) {
+    if (mCount)
+    {
+        ++(*mCount);
+    }
 }
 
 template<typename T>
 T shared_ptr<T>::operator*()
 {
-    return *ptr;
+    return *mPtr;
+}
+
+template<typename T>
+void shared_ptr<T>::clearing()
+{
+    delete mCount;
+    if (mPtr)
+    {
+        delete mPtr;
+    }
+    mCount = nullptr;
+    mPtr = nullptr;
 }
 
 template<typename T>
 shared_ptr<T> shared_ptr<T>::operator=(shared_ptr<T>& other) {
-    if (this != &other) {
+    if (this != &other)
+    {
+        if (mCount)
+        {
+            if (*mCount == 1)
+            {
+                clearing();
+            }
+            else --(*mCount);
+        }
+        mPtr = other.mPtr;
+        mCount = other.mCount;
+        if (mCount)
+        {
+            ++(*mCount);
+        }
 
-        if (ptr)
-        {
-            ptr = other.ptr;
-        }
-        if (count)
-        {
-            count = other.count;
-            ++(*count);
-        }
     }
     return *this;
 }
 
 template<typename T>
-shared_ptr<T>::~shared_ptr() {
-    if (count) {
-        if (*count == 1) {
-            delete count;
-            if (ptr)
-            {
-                delete ptr;
-            }
+shared_ptr<T>::~shared_ptr()
+{
+    if (mCount)
+    {
+        if (*mCount == 1)
+        {
+            clearing();
         }
-        else --(*count);
+        else --(*mCount);
     }
+
 }
 
 template<typename T>
-size_t shared_ptr<T>::use_count() const {
-    return (count) ? *count : 0;
+size_t shared_ptr<T>::use_count() const
+{
+    return (mCount) ? *mCount : 0;
 }
 
 template<typename T>
-bool shared_ptr<T>::unique() const {
-    return (*count == 1);
+bool shared_ptr<T>::unique() const
+{
+    return (mCount) ? (*mCount == 1) : false;
 }
 
+template<typename T>
+bool shared_ptr<T>::existsPtr() const
+{
+    return (mPtr);
+}
 
-
+template<typename T>
+bool shared_ptr<T>::existsCount() const
+{
+    return (mCount);
+}
