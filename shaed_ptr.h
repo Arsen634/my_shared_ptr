@@ -1,9 +1,12 @@
 #pragma once
-
 #include <iostream>
+
+class Test;
+
 template <typename T>
 class shared_ptr {
 public:
+    friend class Test;
     shared_ptr();
     shared_ptr(T* ptr);
     shared_ptr(shared_ptr<T>& other);
@@ -11,13 +14,12 @@ public:
     shared_ptr<T> operator= (shared_ptr<T>& other);
     T operator*();
     size_t use_count() const;
-    bool unique() const;
-    void clearing();
-    bool existsPtr() const;
-    bool existsCount() const;
     template<typename T>
     friend void swap(shared_ptr<T>& p1, shared_ptr<T>& p2);
-
+    void clearing();
+    bool unique() const;
+    bool existsPtr() const;
+    bool existsCount() const;
 private:
     T* m_ptr;
     size_t* m_count;
