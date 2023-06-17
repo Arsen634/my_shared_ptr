@@ -1,7 +1,7 @@
 ﻿#include <iostream>
 #define BOOST_TEST_MODULE mytests
 #include <boost/test/included/unit_test.hpp>
-#include "shaed_ptr.h"
+#include "..shaed_ptr.h"
 
 BOOST_AUTO_TEST_CASE(test_main_1)
 {
