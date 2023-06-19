@@ -11,12 +11,7 @@ BOOST_AUTO_TEST_CASE(test_main_1)
     BOOST_CHECK(p1.use_count() == 1);
     BOOST_CHECK(p1.existsPtr() == true);
     BOOST_CHECK(p1.existsCount() == true);
-    shared_ptr<int> p2(new int(10));
-    BOOST_CHECK(*p2 == 10);
-    BOOST_CHECK(p2.unique() == true);
-    BOOST_CHECK(p2.use_count() == 1);
-    BOOST_CHECK(p2.existsPtr() == true);
-    BOOST_CHECK(p2.existsCount() == true);
+
 }
 
 BOOST_AUTO_TEST_CASE(test_main_2)
@@ -107,7 +102,11 @@ BOOST_AUTO_TEST_CASE(test_swap_main_1)
 {
     shared_ptr<int> p1(new int(1));
     shared_ptr<int> p2(new int(2));
+    int* sp1 = p1.original();
+    int* sp2 = p2.original();
     swap(p1, p2);
+    BOOST_CHECK(p1.original() == sp2);
+    BOOST_CHECK(p2.original() == sp1);
     BOOST_CHECK(*p1 == 2);
     BOOST_CHECK(*p2 == 1);
     // BOOST_CHECK();
@@ -148,5 +147,19 @@ BOOST_AUTO_TEST_CASE(test_nollptr)
     BOOST_CHECK(p1.use_count() == 0);
     BOOST_CHECK(p1.existsPtr() == false);
     BOOST_CHECK(p1.existsCount() == false);
+}
 
+BOOST_AUTO_TEST_CASE(test_nollptr_swap)
+{
+    shared_ptr<int> p1(new int(9));
+    shared_ptr<int> p2;
+    swap(p1, p2);
+    BOOST_CHECK(p2.unique() == true);
+    BOOST_CHECK(p2.use_count() == 1);
+    BOOST_CHECK(p2.existsPtr() == true);
+    BOOST_CHECK(p2.existsCount() == true);
+    BOOST_CHECK(p1.unique() == false);
+    BOOST_CHECK(p1.use_count() == 0);
+    BOOST_CHECK(p1.existsPtr() == false);
+    BOOST_CHECK(p1.existsCount() == false);
 }
