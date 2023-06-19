@@ -13,6 +13,7 @@ public:
     ~shared_ptr();
     shared_ptr<T> operator= (shared_ptr<T>& other);
     T operator*();
+    T* original();
     size_t use_count() const;
     template<typename T>
     friend void swap(shared_ptr<T>& p1, shared_ptr<T>& p2);
@@ -62,7 +63,7 @@ T shared_ptr<T>::operator*()
         std::cout << is.what();
     }
 
-}
+} 
 
 template<typename T>
 void shared_ptr<T>::clearing()
@@ -73,6 +74,19 @@ void shared_ptr<T>::clearing()
         delete m_ptr;
     m_count = nullptr;
     m_ptr = nullptr;
+}
+
+template<typename T>
+T* shared_ptr<T>::original()
+{
+    try
+    {
+        return m_ptr;
+    }
+    catch (const std::exception& is)
+    {
+        std::cout << is.what();
+    }
 }
 
 template<typename T>
