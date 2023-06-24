@@ -17,11 +17,11 @@ public:
     size_t use_count() const;
     template<typename T>
     friend void swap(shared_ptr<T>& p1, shared_ptr<T>& p2);
-    void clearing();
     bool unique() const;
     bool existsPtr() const;
     bool existsCount() const;
 private:
+    void clear();
     T* m_ptr;
     size_t* m_count;
 };
@@ -54,19 +54,13 @@ shared_ptr<T>::shared_ptr(shared_ptr<T>& other) : m_count(other.m_count), m_ptr(
 template<typename T>
 T shared_ptr<T>::operator*()
 {
-    try
-    {
-        return *m_ptr;
-    }
-    catch (const std::exception& is)
-    {
-        std::cout << is.what();
-    }
-
-} 
+    if (not(m_ptr))
+        throw std::exception("error: the link does not exist ");
+    return *m_ptr;
+}
 
 template<typename T>
-void shared_ptr<T>::clearing()
+void shared_ptr<T>::clear()
 {
     if (m_count)
         delete m_count;
@@ -79,14 +73,9 @@ void shared_ptr<T>::clearing()
 template<typename T>
 T* shared_ptr<T>::original()
 {
-    try
-    {
-        return m_ptr;
-    }
-    catch (const std::exception& is)
-    {
-        std::cout << is.what();
-    }
+    if (not(m_ptr))
+        throw std::exception("error: the link does not exist ");
+    return m_ptr;
 }
 
 template<typename T>
@@ -97,7 +86,7 @@ shared_ptr<T> shared_ptr<T>::operator=(shared_ptr<T>& other) {
         {
             if (*m_count == 1)
             {
-                clearing();
+                clear();
             }
             else --(*m_count);
         }
@@ -119,7 +108,7 @@ shared_ptr<T>::~shared_ptr()
     {
         if (*m_count == 1)
         {
-            clearing();
+            clear();
         }
         else --(*m_count);
     }
