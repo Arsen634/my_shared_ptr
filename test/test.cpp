@@ -1,4 +1,4 @@
-﻿#include <iostream>
+
 #define BOOST_TEST_MODULE mytests
 #include <boost/test/included/unit_test.hpp>
 #include "..shaed_ptr.h"
@@ -49,7 +49,6 @@ BOOST_AUTO_TEST_CASE(test_main_4)
     {
         shared_ptr<int> p2(new int(10));
         p1 = p2;
-        BOOST_CHECK(p2.unique() == false);
         BOOST_CHECK(p2.unique() == false);
         BOOST_CHECK(p1.use_count() == 2);
         BOOST_CHECK(p2.use_count() == 2);
