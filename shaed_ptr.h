@@ -1,5 +1,4 @@
 #pragma once
-#include <iostream>
 
 class Test;
 
@@ -13,7 +12,7 @@ public:
     ~shared_ptr();
     shared_ptr<T> operator= (shared_ptr<T>& other);
     T operator*();
-    T* original();
+    T* SetM_ptr();
     size_t use_count() const;
     template<typename T>
     friend void swap(shared_ptr<T>& p1, shared_ptr<T>& p2);
@@ -21,6 +20,7 @@ public:
     bool existsPtr() const;
     bool existsCount() const;
 private:
+    void link_does_not_exist();
     void clear();
     T* m_ptr;
     size_t* m_count;
@@ -52,10 +52,16 @@ shared_ptr<T>::shared_ptr(shared_ptr<T>& other) : m_count(other.m_count), m_ptr(
 }
 
 template<typename T>
-T shared_ptr<T>::operator*()
+void shared_ptr<T>::link_does_not_exist()
 {
     if (not(m_ptr))
         throw std::exception("error: the link does not exist ");
+}
+
+template<typename T>
+T shared_ptr<T>::operator*()
+{
+    link_does_not_exist();
     return *m_ptr;
 }
 
@@ -71,10 +77,9 @@ void shared_ptr<T>::clear()
 }
 
 template<typename T>
-T* shared_ptr<T>::original()
+T* shared_ptr<T>::SetM_ptr()
 {
-    if (not(m_ptr))
-        throw std::exception("error: the link does not exist ");
+    link_does_not_exist();
     return m_ptr;
 }
 
